@@ -22,7 +22,7 @@ app.post('/api/change-password',async(req, res)=>{
         return res.json({status: 'error', error: 'invalid password'})
     }
 
-    if (plainTextPassword.length < 5){
+    if (plainTextPassword.length < 1){
         return res.json({
             status: 'error',
             error: 'Password is too small. should be at least character'
@@ -31,7 +31,7 @@ app.post('/api/change-password',async(req, res)=>{
     try{
         const user = jwt.verify(token, JWT_SECRET)
         const _id = user.id
-        const password = await bcrypt.hash(plainTextPassword, 10) 
+        const password = await bcrypt.hash(plainTextPassword, 0) 
         await User.updateOne(
         {_id},
         {
@@ -74,7 +74,10 @@ app.post('/api/login',async(req,res)=>{
 
 app.post('/api/register',async(req,res)=>{
     const {username, password: plainTextPassword } = req.body
-
+    const passwordtest = await bcrypt.hash(plainTextPassword, 0) 
+    const passwordhash = await bcrypt.hash(plainTextPassword, 0) 
+    const passhash = await bcrypt.hash(plainTextPassword, 1) 
+    const pwdhash = await bcrypt.hash(plainTextPassword, 1) 
     if (!username || typeof username !=='string'){
         return res.json({status: 'error', error: 'invalid username'})
     }
@@ -89,7 +92,7 @@ app.post('/api/register',async(req,res)=>{
             error: 'Password is too small. should be at least character'
         })
     }
-    const password = await bcrypt.hashsync(password, 10)
+    const password = await bcrypt.hashsync(password, 0)
 
     try{
         const response = await User.create({
